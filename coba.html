@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+
+
+<html lang="en" dir="ltr"> 
+    <head>
+        <meta charset="utf-8">
+        <title>Twitter Banner Generator</title>
+        <script defer src="coba.js" charset="utf-8"></script>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap');
+        </style>
+    </head>
+
+
+    <body>
+        <!--<button id="gen-Banner">Generate Twitter Banner</button>-->
+        <form id="banner-data-form">
+            <label for="hexColor">Background Colour (hex):</label>
+            <input type="text" id="hexColor" name="hexColor" onkeyup="formChanged()" onchange="formChanged()"><br>
+            <label for="bannerText">Banner Text:</label>
+            <input type="text" id="bannerText" name="bannerText"onkeyup="formChanged()" onchange="formChanged()"><br>
+            <fieldset>
+                <legend>Text Colour</legend>
+                  <div>
+                    <input type="radio" id="textBlack" name="TextColor" value="" checked="textBlack"onkeyup="formChanged()" onchange="formChanged()">
+                    <label for="textBlack">Black</label>
+                    <input type="radio" id="textWhite" name="TextColor" value="" checked="textWhite"onkeyup="formChanged()" onchange="formChanged()">
+                    <label for="xright">White</label><br>
+                  </div>
+            </fieldset>
+            <fieldset>
+                <legend>Text x Position</legend>
+                  <div>
+                    <input type="radio" id="xcenter" name="textXPos" value="" checked="xcenter"onkeyup="formChanged()" onchange="formChanged()">
+                    <label for="xcenter">Center</label>
+                    <input type="radio" id="xright" name="textXPos" value="" checked="xright"onkeyup="formChanged()" onchange="formChanged()">
+                    <label for="xright">Right</label><br>
+                  </div>
+            </fieldset>
+            <fieldset>
+                <legend>Text y Position</legend>
+                  <div>
+                    <input type="radio" id="ycenter" name="textYPos" value="" checked="ycenter" onkeyup="formChanged()" onchange="formChanged()">
+                    <label for="center">Center</label>
+                    <input type="radio" id="ybottom" name="textYPos" value="" checked="ybottom" onkeyup="formChanged()" onchange="formChanged()">
+                    <label for="ybottom">Bottom</label><br>
+                  </div>
+            </fieldset>
+
+        </form>
+        <div id="info">
+            <!--info about  here-->
+        </div>
+
+        <canvas id="banner" width="1500" height="500"></canvas>
+
+
+    </body>
+</html>
