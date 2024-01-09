@@ -1,4 +1,6 @@
 import { Fragment, useState, useRef, useEffect } from 'react'
+import { SliderPicker } from 'react-color';
+
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import {
   Bars3Icon,
@@ -141,8 +143,10 @@ export default function Example() {
     setSelectedFont(e.target.value);
   };  
 
-  const handleHexColorChange = (e) => {
-    setHexColor(e.target.value);
+  const handleHexColorChange = (color) => {
+    if (color && color.hex) {
+      setHexColor(color.hex);
+    }
   };
 
   const handleBannerTextChange = (e) => {
@@ -426,23 +430,33 @@ export default function Example() {
 
         <aside className="fixed bottom-0 left-0 right-0 top-96 overflow-y-auto bg-white border-r border-gray-200 px-4 sm:left-20 sm:top-20 sm:w-96 sm:px-6 lg:px-8 xl:block">
           <form id="banner-data-form" className="mb-4">
-            <label htmlFor="hexColor" className="block text-sm font-medium text-gray-600">Background Colour (hex):</label>
+            <label htmlFor="hexColor" className="mb-4 block text-sm font-medium text-gray-600">
+              Background Colour (hex):
+            </label>
+
+            {/* Use the Circle Picker component */}
+            <SliderPicker
+              color={hexColor}
+              onChange={handleHexColorChange}
+            />
+
+            {/* Display the hex color value if needed */}
             <input
               type="text"
               id="hexColor"
               name="hexColor"
-              onChange={handleHexColorChange}
               value={hexColor}
-              className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
+              className="mt-4 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
+              readOnly
             />
-            <label htmlFor="bannerText" className="block text-sm font-medium text-gray-600">Banner Text:</label>
+            <label htmlFor="bannerText" className="mt-2 block text-sm font-medium text-gray-600">Banner Text:</label>
             <input
               type="text"
               id="bannerText"
               name="bannerText"
               onChange={handleBannerTextChange}
               value={bannerText}
-              className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
+              className="mt-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
             />
             <div className='flex flex-row'>
               <fieldset className="flex-1 mt-4">
