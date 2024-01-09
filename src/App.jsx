@@ -20,6 +20,14 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
+const fontOptions = [
+  { label: 'Bree Serif', value: "'Bree Serif', serif" },
+  { label: 'Arial', value: 'Arial, sans-serif' },
+  { label: 'Courier New', value: "'Courier New', monospace" },
+  { label: 'Georgia', value: 'Georgia, serif' }, // New font family
+  { label: 'Tahoma', value: 'Tahoma, sans-serif' },
+];
+
 export default function Example() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [hexColor, setHexColor] = useState('');
@@ -34,6 +42,7 @@ export default function Example() {
   const [canvasWidth, setCanvasWidth] = useState(1500);
   const [canvasHeight, setCanvasHeight] = useState(500);
   const [clickedButton, setClickedButton] = useState(null);
+  const [selectedFont, setSelectedFont] = useState(fontOptions[0].value);
 
   const canvasRef = useRef(null);
 
@@ -66,7 +75,8 @@ export default function Example() {
     
     // Draw text
     ctx.fillStyle = textColor;
-    ctx.font = "50px 'Bree Serif'";
+    // ctx.font = "50px 'Bree Serif'";
+    ctx.font = `75px ${selectedFont}`; //custom font
     ctx.textAlign = textXPos;
 
     let textPosition = [];
@@ -125,7 +135,11 @@ export default function Example() {
     };
 
     ctx.fillText(bannerText, textPosition[0], textPosition[1]);
-  }, [hexColor, bannerText, textXPos, textYPos, textColor, logo, logoSize, logoXPos, logoYPos, clickedButton]);
+  }, [hexColor, bannerText, textXPos, textYPos, textColor, logo, logoSize, logoXPos, logoYPos, clickedButton, selectedFont]);
+
+  const handleFontChange = (e) => {
+    setSelectedFont(e.target.value);
+  };  
 
   const handleHexColorChange = (e) => {
     setHexColor(e.target.value);
@@ -391,13 +405,13 @@ export default function Example() {
                   onClick={() => handleSizeChange(1500, 500, 'Twitter')}
                   className={`mr-2 p-2 ${clickedButton === 'Twitter' ? 'bg-green-300' : 'bg-blue-500'} text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300`}
                 >
-                  Twitter
+                  Twitter Size
                 </button>
                 <button
                   onClick={() => handleSizeChange(1584, 396, 'LinkedIn')}
                   className={`p-2 ${clickedButton === 'LinkedIn' ? 'bg-green-300' : 'bg-blue-500'} text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-red-300`}
                 >
-                  LinkedIn
+                  LinkedIn Size
                 </button>
               </div>
               <button
@@ -410,7 +424,7 @@ export default function Example() {
           </main>
         </div>
 
-        <aside className="fixed bottom-0 left-0 right-0 top-96 overflow-y-auto bg-white border-r border-gray-200 px-4 sm:left-20 sm:top-16 sm:w-96 sm:px-6 lg:px-8 xl:block">
+        <aside className="fixed bottom-0 left-0 right-0 top-96 overflow-y-auto bg-white border-r border-gray-200 px-4 sm:left-20 sm:top-20 sm:w-96 sm:px-6 lg:px-8 xl:block">
           <form id="banner-data-form" className="mb-4">
             <label htmlFor="hexColor" className="block text-sm font-medium text-gray-600">Background Colour (hex):</label>
             <input
@@ -430,117 +444,133 @@ export default function Example() {
               value={bannerText}
               className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
             />
-            <fieldset className="mt-4">
-              <legend className="text-sm font-medium text-gray-600">Text Colour</legend>
-              <div className="mt-2 space-x-4">
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="textBlack"
-                    name="TextColor"
-                    value="#000"
-                    checked={textColor === '#000'}
-                    onChange={handleTextColorChange}
-                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                  />
-                  <label htmlFor="textBlack" className="ml-2 block text-sm text-gray-900">Black</label>
+            <div className='flex flex-row'>
+              <fieldset className="flex-1 mt-4">
+                <legend className="text-sm font-medium text-gray-600">Text Colour</legend>
+                <div className="mt-2">
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="textBlack"
+                      name="TextColor"
+                      value="#000"
+                      checked={textColor === '#000'}
+                      onChange={handleTextColorChange}
+                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                    />
+                    <label htmlFor="textBlack" className="ml-2 block text-sm text-gray-900">Black</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="textWhite"
+                      name="TextColor"
+                      value="#FFF"
+                      checked={textColor === '#FFF'}
+                      onChange={handleTextColorChange}
+                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                    />
+                    <label htmlFor="textWhite" className="ml-2 block text-sm text-gray-900">White</label>
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="textWhite"
-                    name="TextColor"
-                    value="#FFF"
-                    checked={textColor === '#FFF'}
-                    onChange={handleTextColorChange}
-                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                  />
-                  <label htmlFor="textWhite" className="ml-2 block text-sm text-gray-900">White</label>
+              </fieldset>
+              <fieldset className="flex-1 mt-4">
+                <legend className="text-sm font-medium text-gray-600">Text x Position</legend>
+                <div className="mt-2">
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="xcenter"
+                      name="textXPos"
+                      value="center"
+                      checked={textXPos === 'center'}
+                      onChange={handleTextXPosChange}
+                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                    />
+                    <label htmlFor="xcenter" className="ml-2 block text-sm text-gray-900">Center</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="xright"
+                      name="textXPos"
+                      value="right"
+                      checked={textXPos === 'right'}
+                      onChange={handleTextXPosChange}
+                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                    />
+                    <label htmlFor="xright" className="ml-2 block text-sm text-gray-900">Right</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="xleft"
+                      name="textXPos"
+                      value="left"
+                      checked={textXPos === 'left'}
+                      onChange={handleTextXPosChange}
+                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                    />
+                    <label htmlFor="xleft" className="ml-2 block text-sm text-gray-900">Left</label>
+                  </div>
                 </div>
-              </div>
-            </fieldset>
-            <fieldset className="mt-4">
-              <legend className="text-sm font-medium text-gray-600">Text x Position</legend>
-              <div className="mt-2 space-x-4">
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="xcenter"
-                    name="textXPos"
-                    value="center"
-                    checked={textXPos === 'center'}
-                    onChange={handleTextXPosChange}
-                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                  />
-                  <label htmlFor="xcenter" className="ml-2 block text-sm text-gray-900">Center</label>
+              </fieldset>
+              <fieldset className="flex-1 mt-4">
+                <legend className="text-sm font-medium text-gray-600">Text y Position</legend>
+                <div className="mt-2">
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="ycenter"
+                      name="textYPos"
+                      value="center"
+                      checked={textYPos === 'center'}
+                      onChange={handleTextYPosChange}
+                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                    />
+                    <label htmlFor="center" className="ml-2 block text-sm text-gray-900">Center</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="ybottom"
+                      name="textYPos"
+                      value="bottom"
+                      checked={textYPos === 'bottom'}
+                      onChange={handleTextYPosChange}
+                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                    />
+                    <label htmlFor="ybottom" className="ml-2 block text-sm text-gray-900">Bottom</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="ytop"
+                      name="textYPos"
+                      value="top"
+                      checked={textYPos === 'top'}
+                      onChange={handleTextYPosChange}
+                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                    />
+                    <label htmlFor="ybottom" className="ml-2 block text-sm text-gray-900">Top</label>
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="xright"
-                    name="textXPos"
-                    value="right"
-                    checked={textXPos === 'right'}
-                    onChange={handleTextXPosChange}
-                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                  />
-                  <label htmlFor="xright" className="ml-2 block text-sm text-gray-900">Right</label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="xleft"
-                    name="textXPos"
-                    value="left"
-                    checked={textXPos === 'left'}
-                    onChange={handleTextXPosChange}
-                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                  />
-                  <label htmlFor="xleft" className="ml-2 block text-sm text-gray-900">Left</label>
-                </div>
-              </div>
-            </fieldset>
-            <fieldset className="mt-4">
-              <legend className="text-sm font-medium text-gray-600">Text y Position</legend>
-              <div className="mt-2 space-x-4">
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="ycenter"
-                    name="textYPos"
-                    value="center"
-                    checked={textYPos === 'center'}
-                    onChange={handleTextYPosChange}
-                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                  />
-                  <label htmlFor="center" className="ml-2 block text-sm text-gray-900">Center</label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="ybottom"
-                    name="textYPos"
-                    value="bottom"
-                    checked={textYPos === 'bottom'}
-                    onChange={handleTextYPosChange}
-                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                  />
-                  <label htmlFor="ybottom" className="ml-2 block text-sm text-gray-900">Bottom</label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="ytop"
-                    name="textYPos"
-                    value="top"
-                    checked={textYPos === 'top'}
-                    onChange={handleTextYPosChange}
-                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                  />
-                  <label htmlFor="ybottom" className="ml-2 block text-sm text-gray-900">Top</label>
-                </div>
-              </div>
-            </fieldset>
+              </fieldset>
+            </div>
+            <label htmlFor="fontFamily" className="mt-4 block text-sm font-medium text-gray-600">Font Family:</label>
+            <select
+              id="fontFamily"
+              name="fontFamily"
+              onChange={handleFontChange}
+              value={selectedFont}
+              className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
+            >
+              {fontOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
             <label htmlFor="logo" className="mt-4 block text-sm font-medium text-gray-600">Logo:</label>
             <input
               type="file"
