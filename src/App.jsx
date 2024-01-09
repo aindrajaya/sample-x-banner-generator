@@ -3,23 +3,13 @@ import { Dialog, Menu, Transition } from '@headlessui/react'
 import {
   Bars3Icon,
   BellIcon,
-  CalendarIcon,
-  ChartPieIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
   HomeIcon,
-  UsersIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 
 const navigation = [
-  { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
-  { name: 'Team', href: '#', icon: UsersIcon, current: false },
-  { name: 'Projects', href: '#', icon: FolderIcon, current: false },
-  { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
-  { name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: false },
-  { name: 'Reports', href: '#', icon: ChartPieIcon, current: false },
+  { name: 'Home', href: '#', icon: HomeIcon, current: true },
 ]
 const userNavigation = [
   { name: 'Your profile', href: '#' },
@@ -41,6 +31,9 @@ export default function Example() {
   const [logoSize, setLogoSize] = useState('medium');
   const [logoXPos, setLogoXPos] = useState('center');
   const [logoYPos, setLogoYPos] = useState('center');
+  const [canvasWidth, setCanvasWidth] = useState(1500);
+  const [canvasHeight, setCanvasHeight] = useState(500);
+  const [clickedButton, setClickedButton] = useState(null);
 
   const canvasRef = useRef(null);
 
@@ -132,7 +125,7 @@ export default function Example() {
     };
 
     ctx.fillText(bannerText, textPosition[0], textPosition[1]);
-  }, [hexColor, bannerText, textXPos, textYPos, textColor, logo, logoSize, logoXPos, logoYPos]);
+  }, [hexColor, bannerText, textXPos, textYPos, textColor, logo, logoSize, logoXPos, logoYPos, clickedButton]);
 
   const handleHexColorChange = (e) => {
     setHexColor(e.target.value);
@@ -170,8 +163,6 @@ export default function Example() {
     setLogoYPos(e.target.value);
   };
 
-  
-
   const formChanged = () => {
     // Perform any additional logic when the form changes
   };
@@ -187,16 +178,14 @@ export default function Example() {
     document.body.removeChild(link);
   };
 
+  const handleSizeChange = (width, height, button) => {
+    setCanvasWidth(width);
+    setCanvasHeight(height);
+    setClickedButton(button);
+  };
+
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
       <div>
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog as="div" className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
@@ -244,7 +233,7 @@ export default function Example() {
                     <div className="flex h-16 shrink-0 items-center">
                       <img
                         className="h-8 w-auto"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                        src="/pena.png"
                         alt="Your Company"
                       />
                     </div>
@@ -280,7 +269,7 @@ export default function Example() {
           <div className="flex h-16 shrink-0 items-center justify-center">
             <img
               className="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+              src="/pena.png"
               alt="Your Company"
             />
           </div>
@@ -393,10 +382,24 @@ export default function Example() {
               <canvas
                 ref={canvasRef}
                 id="banner"
-                width={1500}  // Set your preferred width
-                height={500} // Set your preferred height
+                width={canvasWidth}
+                height={canvasHeight}
                 className="border border-gray-400 rounded mt-4 w-full"
               ></canvas>
+              <div className="mt-4">
+                <button
+                  onClick={() => handleSizeChange(1500, 500, 'Twitter')}
+                  className={`mr-2 p-2 ${clickedButton === 'Twitter' ? 'bg-green-300' : 'bg-blue-500'} text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300`}
+                >
+                  Twitter
+                </button>
+                <button
+                  onClick={() => handleSizeChange(1584, 396, 'LinkedIn')}
+                  className={`p-2 ${clickedButton === 'LinkedIn' ? 'bg-green-300' : 'bg-blue-500'} text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-red-300`}
+                >
+                  LinkedIn
+                </button>
+              </div>
               <button
                 onClick={handleDownloadImage}
                 className="mt-4 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
@@ -407,181 +410,181 @@ export default function Example() {
           </main>
         </div>
 
-        <aside className="fixed bottom-0 left-20 top-16 hidden w-96 overflow-y-auto border-r border-gray-200 px-4 py-6 sm:px-6 lg:px-8 xl:block">
+        <aside className="fixed bottom-0 left-0 right-0 top-96 overflow-y-auto bg-white border-r border-gray-200 px-4 sm:left-20 sm:top-16 sm:w-96 sm:px-6 lg:px-8 xl:block">
           <form id="banner-data-form" className="mb-4">
-              <label htmlFor="hexColor" className="block text-sm font-medium text-gray-600">Background Colour (hex):</label>
-              <input
-                type="text"
-                id="hexColor"
-                name="hexColor"
-                onChange={handleHexColorChange}
-                value={hexColor}
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
-              />
-              <label htmlFor="bannerText" className="block text-sm font-medium text-gray-600">Banner Text:</label>
-              <input
-                type="text"
-                id="bannerText"
-                name="bannerText"
-                onChange={handleBannerTextChange}
-                value={bannerText}
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
-              />
-              <fieldset className="mt-4">
-                <legend className="text-sm font-medium text-gray-600">Text Colour</legend>
-                <div className="mt-2 space-x-4">
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      id="textBlack"
-                      name="TextColor"
-                      value="#000"
-                      checked={textColor === '#000'}
-                      onChange={handleTextColorChange}
-                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                    />
-                    <label htmlFor="textBlack" className="ml-2 block text-sm text-gray-900">Black</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      id="textWhite"
-                      name="TextColor"
-                      value="#FFF"
-                      checked={textColor === '#FFF'}
-                      onChange={handleTextColorChange}
-                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                    />
-                    <label htmlFor="textWhite" className="ml-2 block text-sm text-gray-900">White</label>
-                  </div>
+            <label htmlFor="hexColor" className="block text-sm font-medium text-gray-600">Background Colour (hex):</label>
+            <input
+              type="text"
+              id="hexColor"
+              name="hexColor"
+              onChange={handleHexColorChange}
+              value={hexColor}
+              className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
+            />
+            <label htmlFor="bannerText" className="block text-sm font-medium text-gray-600">Banner Text:</label>
+            <input
+              type="text"
+              id="bannerText"
+              name="bannerText"
+              onChange={handleBannerTextChange}
+              value={bannerText}
+              className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
+            />
+            <fieldset className="mt-4">
+              <legend className="text-sm font-medium text-gray-600">Text Colour</legend>
+              <div className="mt-2 space-x-4">
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="textBlack"
+                    name="TextColor"
+                    value="#000"
+                    checked={textColor === '#000'}
+                    onChange={handleTextColorChange}
+                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                  />
+                  <label htmlFor="textBlack" className="ml-2 block text-sm text-gray-900">Black</label>
                 </div>
-              </fieldset>
-              <fieldset className="mt-4">
-                <legend className="text-sm font-medium text-gray-600">Text x Position</legend>
-                <div className="mt-2 space-x-4">
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      id="xcenter"
-                      name="textXPos"
-                      value="center"
-                      checked={textXPos === 'center'}
-                      onChange={handleTextXPosChange}
-                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                    />
-                    <label htmlFor="xcenter" className="ml-2 block text-sm text-gray-900">Center</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      id="xright"
-                      name="textXPos"
-                      value="right"
-                      checked={textXPos === 'right'}
-                      onChange={handleTextXPosChange}
-                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                    />
-                    <label htmlFor="xright" className="ml-2 block text-sm text-gray-900">Right</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      id="xleft"
-                      name="textXPos"
-                      value="left"
-                      checked={textXPos === 'left'}
-                      onChange={handleTextXPosChange}
-                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                    />
-                    <label htmlFor="xleft" className="ml-2 block text-sm text-gray-900">Left</label>
-                  </div>
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="textWhite"
+                    name="TextColor"
+                    value="#FFF"
+                    checked={textColor === '#FFF'}
+                    onChange={handleTextColorChange}
+                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                  />
+                  <label htmlFor="textWhite" className="ml-2 block text-sm text-gray-900">White</label>
                 </div>
-              </fieldset>
-              <fieldset className="mt-4">
-                <legend className="text-sm font-medium text-gray-600">Text y Position</legend>
-                <div className="mt-2 space-x-4">
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      id="ycenter"
-                      name="textYPos"
-                      value="center"
-                      checked={textYPos === 'center'}
-                      onChange={handleTextYPosChange}
-                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                    />
-                    <label htmlFor="center" className="ml-2 block text-sm text-gray-900">Center</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      id="ybottom"
-                      name="textYPos"
-                      value="bottom"
-                      checked={textYPos === 'bottom'}
-                      onChange={handleTextYPosChange}
-                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                    />
-                    <label htmlFor="ybottom" className="ml-2 block text-sm text-gray-900">Bottom</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      id="ytop"
-                      name="textYPos"
-                      value="top"
-                      checked={textYPos === 'top'}
-                      onChange={handleTextYPosChange}
-                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                    />
-                    <label htmlFor="ybottom" className="ml-2 block text-sm text-gray-900">Top</label>
-                  </div>
+              </div>
+            </fieldset>
+            <fieldset className="mt-4">
+              <legend className="text-sm font-medium text-gray-600">Text x Position</legend>
+              <div className="mt-2 space-x-4">
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="xcenter"
+                    name="textXPos"
+                    value="center"
+                    checked={textXPos === 'center'}
+                    onChange={handleTextXPosChange}
+                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                  />
+                  <label htmlFor="xcenter" className="ml-2 block text-sm text-gray-900">Center</label>
                 </div>
-              </fieldset>
-              <label htmlFor="logo" className="mt-4 block text-sm font-medium text-gray-600">Logo:</label>
-              <input
-                type="file"
-                id="logo"
-                name="logo"
-                accept="image/*"
-                onChange={handleLogoChange}
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
-              />
-              <label htmlFor="logoSize" className="mt-4 block text-sm font-medium text-gray-600">Logo Size:</label>
-              <select
-                id="logoSize"
-                name="logoSize"
-                onChange={handleLogoSizeChange}
-                value={logoSize}
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
-              >
-                <option value="small">Small</option>
-                <option value="medium">Medium</option>
-                <option value="big">Big</option>
-              </select>
-              <label htmlFor="logoXPos" className="mt-4 block text-sm font-medium text-gray-600">Logo X Position:</label>
-              <select
-                id="logoXPos"
-                name="logoXPos"
-                onChange={handleLogoXPosChange}
-                value={logoXPos}
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
-              >
-                <option value="center">Center</option>
-                <option value="right">Right</option>
-              </select>
-              <label htmlFor="logoYPos" className="mt-4 block text-sm font-medium text-gray-600">Logo Y Position:</label>
-              <select
-                id="logoYPos"
-                name="logoYPos"
-                onChange={handleLogoYPosChange}
-                value={logoYPos}
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
-              >
-                <option value="center">Center</option>
-                <option value="bottom">Bottom</option>
-              </select>
-            </form>
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="xright"
+                    name="textXPos"
+                    value="right"
+                    checked={textXPos === 'right'}
+                    onChange={handleTextXPosChange}
+                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                  />
+                  <label htmlFor="xright" className="ml-2 block text-sm text-gray-900">Right</label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="xleft"
+                    name="textXPos"
+                    value="left"
+                    checked={textXPos === 'left'}
+                    onChange={handleTextXPosChange}
+                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                  />
+                  <label htmlFor="xleft" className="ml-2 block text-sm text-gray-900">Left</label>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset className="mt-4">
+              <legend className="text-sm font-medium text-gray-600">Text y Position</legend>
+              <div className="mt-2 space-x-4">
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="ycenter"
+                    name="textYPos"
+                    value="center"
+                    checked={textYPos === 'center'}
+                    onChange={handleTextYPosChange}
+                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                  />
+                  <label htmlFor="center" className="ml-2 block text-sm text-gray-900">Center</label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="ybottom"
+                    name="textYPos"
+                    value="bottom"
+                    checked={textYPos === 'bottom'}
+                    onChange={handleTextYPosChange}
+                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                  />
+                  <label htmlFor="ybottom" className="ml-2 block text-sm text-gray-900">Bottom</label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="ytop"
+                    name="textYPos"
+                    value="top"
+                    checked={textYPos === 'top'}
+                    onChange={handleTextYPosChange}
+                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                  />
+                  <label htmlFor="ybottom" className="ml-2 block text-sm text-gray-900">Top</label>
+                </div>
+              </div>
+            </fieldset>
+            <label htmlFor="logo" className="mt-4 block text-sm font-medium text-gray-600">Logo:</label>
+            <input
+              type="file"
+              id="logo"
+              name="logo"
+              accept="image/*"
+              onChange={handleLogoChange}
+              className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
+            />
+            <label htmlFor="logoSize" className="mt-4 block text-sm font-medium text-gray-600">Logo Size:</label>
+            <select
+              id="logoSize"
+              name="logoSize"
+              onChange={handleLogoSizeChange}
+              value={logoSize}
+              className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
+            >
+              <option value="small">Small</option>
+              <option value="medium">Medium</option>
+              <option value="big">Big</option>
+            </select>
+            <label htmlFor="logoXPos" className="mt-4 block text-sm font-medium text-gray-600">Logo X Position:</label>
+            <select
+              id="logoXPos"
+              name="logoXPos"
+              onChange={handleLogoXPosChange}
+              value={logoXPos}
+              className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
+            >
+              <option value="center">Center</option>
+              <option value="right">Right</option>
+            </select>
+            <label htmlFor="logoYPos" className="mt-4 block text-sm font-medium text-gray-600">Logo Y Position:</label>
+            <select
+              id="logoYPos"
+              name="logoYPos"
+              onChange={handleLogoYPosChange}
+              value={logoYPos}
+              className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
+            >
+              <option value="center">Center</option>
+              <option value="bottom">Bottom</option>
+            </select>
+          </form>
         </aside>
       </div>
     </>
