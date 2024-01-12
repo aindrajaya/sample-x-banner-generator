@@ -1,27 +1,15 @@
-import { Fragment, useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, Fragment, useCallback } from 'react'
 import { SliderPicker } from 'react-color';
 
-import { Dialog, Menu, Transition } from '@headlessui/react'
 import {
   Bars3Icon,
-  BellIcon,
-  HomeIcon,
-  XMarkIcon,
 } from '@heroicons/react/24/outline'
-import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import LinkedInBannerGenerator from './ProfessionalTheme';
-
-const navigation = [
-  { name: 'Home', href: '#', icon: HomeIcon, current: true },
-]
-const userNavigation = [
-  { name: 'Your profile', href: '#' },
-  { name: 'Sign out', href: '#' },
-]
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
+import TransitionRoot from './components/TransitionRoot';
+import DesktopSidebar from './components/DesktopSidebar';
+import SearchForm from './components/SearchForm';
+import ProfileSection from './components/ProfileSection';
+import ProfessionalFields from './components/ProfessionalFields';
 
 const fontOptions = [
   { label: 'Bree Serif', value: "'Bree Serif', serif" },
@@ -50,9 +38,58 @@ export default function Generator() {
   const [backgroundImage, setBackgroundImage] = useState(false);
 
   //Professional Theme
-  const [professionalButtonClicked, setProfessionalButtonClicked] = useState(null);
+  const [nameText, setNameText] = useState(""); // Add this state
+  const [occupationText, setOccupationText] = useState(""); // Add this state
+  const [professionalButtonClicked, setProfessionalButtonClicked] = useState(false);
+
+  console.log(professionalButtonClicked, "check state")
 
   const canvasRef = useRef(null);
+
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+
+  useEffect(() => {
+    if (isMounted.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+  
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+      // Draw Professional Theme
+      ctx.fillStyle = hexColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+      // Draw Name text
+      ctx.fillStyle = textColor;
+      const nameFontSize = 50; // Adjust the font size if needed
+      ctx.font = `${nameFontSize}px ${selectedFont}`;
+      ctx.textAlign = "center";
+      ctx.fillText(nameText, canvas.width / 2, canvas.height / 2 - 20);
+  
+      // Draw Occupation text
+      ctx.fillStyle = textColor;
+      const occupationFontSize = 30; // Adjust the font size if needed
+      ctx.font = `${occupationFontSize}px ${selectedFont}`;
+      ctx.textAlign = "center";
+      ctx.fillText(occupationText, canvas.width / 2, canvas.height / 2 + 30);
+  
+      formChanged();
+
+      return () => {
+        setProfessionalButtonClicked(false);
+      };
+    }
+
+
+  }, [hexColor, textColor, selectedFont, professionalButtonClicked, nameText, occupationText]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -60,7 +97,7 @@ export default function Generator() {
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+   
     // Draw background
     ctx.fillStyle = hexColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -102,6 +139,38 @@ export default function Generator() {
       formChanged();
     }
 
+    // Draw text
+    ctx.fillStyle = textColor;
+    const fontSize = 75; // Change this to your desired font size
+    ctx.font = `${fontSize}px ${selectedFont}`;
+    ctx.textAlign = textXPos;
+
+    let textPosition = [];
+    if (textXPos === 'center') {
+      textPosition[0] = canvas.width / 2;
+    } else if(textXPos === 'left') {
+      textPosition[0] = 20;
+    } else {
+      textPosition[0] = canvas.width - 20;
+    }
+
+    if (textYPos === 'center') {
+      textPosition[1] = canvas.height / 2;
+    } else if(textYPos === 'top') {
+      textPosition[1] = 50;
+    } else {
+      textPosition[1] = canvas.height - 20;
+    }
+
+    ctx.fillText(bannerText, textPosition[0], textPosition[1]);
+
+    // Draw the second banner text (professionText)
+    ctx.fillText(professionText, textPosition[0], textPosition[1] + 100);
+
+    // Update bannerText when not in Professional Theme
+    setBannerText(bannerText);      
+    
+
       // Function to draw logo
     function drawLogo() {
       if (logo) {
@@ -122,7 +191,8 @@ export default function Generator() {
     // Function to draw text
     function drawText() {
       ctx.fillStyle = textColor;
-      ctx.font = `75px ${selectedFont}`; // custom font
+      const fontSize = 75; // Change this to your desired font size
+      ctx.font = `${fontSize}px ${selectedFont}`;
       ctx.textAlign = textXPos;
   
       let textPosition = [];
@@ -146,29 +216,6 @@ export default function Generator() {
 
       // Draw the second banner text (professionText)
       ctx.fillText(professionText, textPosition[0], textPosition[1] + 100); 
-    }
-    
-    // Draw text
-    // ctx.fillStyle = textColor;
-    // ctx.font = "50px 'Bree Serif'";
-    // ctx.font = `75px ${selectedFont}`; //custom font
-    // ctx.textAlign = textXPos;
-
-    let textPosition = [];
-    if (textXPos === 'center') {
-      textPosition[0] = canvas.width / 2;
-    } else if(textXPos === 'left') {
-      textPosition[0] = 20;
-    } else {
-      textPosition[0] = canvas.width - 20;
-    }
-
-    if (textYPos === 'center') {
-      textPosition[1] = canvas.height / 2;
-    } else if(textYPos === 'top') {
-      textPosition[1] = 50;
-    } else {
-      textPosition[1] = canvas.height - 20;
     }
 
     const getLogoWidth = () => {
@@ -208,13 +255,8 @@ export default function Generator() {
         return canvas.height - logoHeight - 20; // Customizing the gap from the bottom
       }
     };
-
-    if(!professionalButtonClicked){
-      ctx.fillText(bannerText, textPosition[0], textPosition[1]);
-    }
-
     
-   }, [hexColor, bannerText, textXPos, textYPos, textColor, logo, logoSize, logoXPos, logoYPos, backgroundImage, clickedButton, selectedFont, professionText, professionalButtonClicked]);
+  }, [hexColor, bannerText, textXPos, textYPos, textColor, logo, logoSize, logoXPos, logoYPos, backgroundImage, clickedButton, selectedFont, professionText]);
 
   const handleRemoveBackground = () => {
     setBackgroundImage(null);
@@ -226,13 +268,11 @@ export default function Generator() {
   };
 
   const handleProfessionalTheme = () => {
-    // Update the state and perform any necessary logic for LinkedIn theme
-    // setHexColor('#0A66C2');
-    // setTextColor('#FFF');
-    // setBannerText('LinkedIn Theme');
     setProfessionalButtonClicked(true);
-    // Add any additional customization for LinkedIn theme
-  };
+
+      
+    }
+
 
   const handleTwitterTheme = () => {
     // Update the state and perform any necessary logic for Twitter theme
@@ -309,111 +349,10 @@ export default function Generator() {
   return (
     <>
       <div>
-        <Transition.Root show={sidebarOpen} as={Fragment}>
-          <Dialog as="div" className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
-            <Transition.Child
-              as={Fragment}
-              enter="transition-opacity ease-linear duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="transition-opacity ease-linear duration-300"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div className="fixed inset-0 bg-gray-900/80" />
-            </Transition.Child>
-
-            <div className="fixed inset-0 flex">
-              <Transition.Child
-                as={Fragment}
-                enter="transition ease-in-out duration-300 transform"
-                enterFrom="-translate-x-full"
-                enterTo="translate-x-0"
-                leave="transition ease-in-out duration-300 transform"
-                leaveFrom="translate-x-0"
-                leaveTo="-translate-x-full"
-              >
-                <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-in-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in-out duration-300"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <div className="absolute left-full top-0 flex w-16 justify-center pt-5">
-                      <button type="button" className="-m-2.5 p-2.5" onClick={() => setSidebarOpen(false)}>
-                        <span className="sr-only">Close sidebar</span>
-                        <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
-                      </button>
-                    </div>
-                  </Transition.Child>
-
-                  <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-2 ring-1 ring-white/10">
-                    <div className="flex h-16 shrink-0 items-center">
-                      <img
-                        className="h-8 w-auto"
-                        src="/pena.png"
-                        alt="Your Company"
-                      />
-                    </div>
-                    <nav className="flex flex-1 flex-col">
-                      <ul role="list" className="-mx-2 flex-1 space-y-1">
-                        {navigation.map((item) => (
-                          <li key={item.name}>
-                            <a
-                              href={item.href}
-                              className={classNames(
-                                item.current
-                                  ? 'bg-gray-800 text-white'
-                                  : 'text-gray-400 hover:text-white hover:bg-gray-800',
-                                'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                              )}
-                            >
-                              <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                              {item.name}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </nav>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </Dialog>
-        </Transition.Root>
+        <TransitionRoot sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
 
         {/* Static sidebar for desktop */}
-        <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:w-20 lg:overflow-y-auto lg:bg-gray-900 lg:pb-4">
-          <div className="flex h-16 shrink-0 items-center justify-center">
-            <img
-              className="h-8 w-auto"
-              src="/pena.png"
-              alt="Your Company"
-            />
-          </div>
-          <nav className="mt-8">
-            <ul role="list" className="flex flex-col items-center space-y-1">
-              {navigation.map((item) => (
-                <li key={item.name}>
-                  <a
-                    href={item.href}
-                    className={classNames(
-                      item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800',
-                      'group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-semibold'
-                    )}
-                  >
-                    <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                    <span className="sr-only">{item.name}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
+        <DesktopSidebar />
 
         <div className="lg:pl-20">
           <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
@@ -425,82 +364,15 @@ export default function Generator() {
             {/* Separator */}
             <div className="h-6 w-px bg-gray-900/10 lg:hidden" aria-hidden="true" />
 
+            {/* Navbar Search & Profile */}
             <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-              <form className="relative flex flex-1" action="#" method="GET">
-                <label htmlFor="search-field" className="sr-only">
-                  Search
-                </label>
-                <MagnifyingGlassIcon
-                  className="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-400"
-                  aria-hidden="true"
-                />
-                <input
-                  id="search-field"
-                  className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-                  placeholder="Search..."
-                  type="search"
-                  name="search"
-                />
-              </form>
-              <div className="flex items-center gap-x-4 lg:gap-x-6">
-                <button type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-
-                {/* Separator */}
-                <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10" aria-hidden="true" />
-
-                {/* Profile dropdown */}
-                <Menu as="div" className="relative">
-                  <Menu.Button className="-m-1.5 flex items-center p-1.5">
-                    <span className="sr-only">Open user menu</span>
-                    <img
-                      className="h-8 w-8 rounded-full bg-gray-50"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
-                    />
-                    <span className="hidden lg:flex lg:items-center">
-                      <span className="ml-4 text-sm font-semibold leading-6 text-gray-900" aria-hidden="true">
-                        Tom Cook
-                      </span>
-                      <ChevronDownIcon className="ml-2 h-5 w-5 text-gray-400" aria-hidden="true" />
-                    </span>
-                  </Menu.Button>
-                  <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                      {userNavigation.map((item) => (
-                        <Menu.Item key={item.name}>
-                          {({ active }) => (
-                            <a
-                              href={item.href}
-                              className={classNames(
-                                active ? 'bg-gray-50' : '',
-                                'block px-3 py-1 text-sm leading-6 text-gray-900'
-                              )}
-                            >
-                              {item.name}
-                            </a>
-                          )}
-                        </Menu.Item>
-                      ))}
-                    </Menu.Items>
-                  </Transition>
-                </Menu>
-              </div>
+              <SearchForm />
+              <ProfileSection />
             </div>
           </div>
 
           <main className="xl:pl-96">
-            {professionalButtonClicked ? (<LinkedInBannerGenerator />) : (
+            
               <div className="px-4 py-10 sm:px-6 lg:px-8 lg:py-6">
                 <canvas
                   ref={canvasRef}
@@ -530,7 +402,7 @@ export default function Generator() {
                   Download Image
                 </button>
               </div>
-            )}
+            
           </main>
         </div>
 
@@ -555,15 +427,23 @@ export default function Generator() {
               className="mt-4 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
               readOnly
             />
-            <label htmlFor="bannerText" className="mt-2 block text-sm font-medium text-gray-600">Banner Text:</label>
-            <input
-              type="text"
-              id="bannerText"
-              name="bannerText"
-              onChange={handleBannerTextChange}
-              value={bannerText}
-              className="mt-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
-            />
+            {professionalButtonClicked ? (
+              <ProfessionalFields setNameText={setNameText} setOccupationText={setOccupationText} />
+            ): (
+              <Fragment>
+                <label htmlFor="bannerText" className="mt-2 block text-sm font-medium text-gray-600">Banner Text:</label>
+                <input
+                  type="text"
+                  id="bannerText"
+                  name="bannerText"
+                  onChange={handleBannerTextChange}
+                  value={bannerText}
+                  className="mt-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
+                />
+              </Fragment>
+            )}
+            
+           
             <div className='flex flex-row'>
               <fieldset className="flex-1 mt-4">
                 <legend className="text-sm font-medium text-gray-600">Text Colour</legend>
@@ -750,7 +630,7 @@ export default function Generator() {
             <div className="flex mt-2">
               <button
                 onClick={handleProfessionalTheme}
-                className="mr-2 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+                className={`mr-2 p-2 ${professionalButtonClicked ? 'bg-green-300' : 'bg-blue-500'} text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300`}
               >
                 Professional Theme
               </button>
