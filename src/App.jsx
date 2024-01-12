@@ -34,9 +34,10 @@ export default function Example() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [hexColor, setHexColor] = useState('');
   const [bannerText, setBannerText] = useState('');
+  const [professionText, setProfessionText] = useState('');
   const [textXPos, setTextXPos] = useState('center');
   const [textYPos, setTextYPos] = useState('center');
-  const [textColor, setTextColor] = useState('#000');
+  const [textColor, setTextColor] = useState('#fff');
   const [logo, setLogo] = useState(null);
   const [logoSize, setLogoSize] = useState('medium');
   const [logoXPos, setLogoXPos] = useState('center');
@@ -45,6 +46,7 @@ export default function Example() {
   const [canvasHeight, setCanvasHeight] = useState(500);
   const [clickedButton, setClickedButton] = useState(null);
   const [selectedFont, setSelectedFont] = useState(fontOptions[0].value);
+  const [backgroundImage, setBackgroundImage] = useState(null);
 
   const canvasRef = useRef(null);
 
@@ -74,12 +76,79 @@ export default function Example() {
         formChanged();
       };
     }
+
+    // Draw background image if provided
+    if (backgroundImage) {
+      const backgroundImageImg = new Image();
+      backgroundImageImg.src = URL.createObjectURL(backgroundImage);
+      backgroundImageImg.onload = () => {
+        ctx.drawImage(backgroundImageImg, 0, 0, canvas.width, canvas.height);
+        drawText(); // Draw text after the background image
+        drawLogo(); // Draw logo after the background image
+        formChanged();
+      };
+    } else {
+      // Draw background if no background image
+      ctx.fillStyle = hexColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw text directly if no background image
+      drawLogo();
+      drawText();
+      formChanged();
+    }
+
+      // Function to draw logo
+    function drawLogo() {
+      if (logo) {
+        const logoImg = new Image();
+        logoImg.src = URL.createObjectURL(logo);
+        logoImg.onload = () => {
+          const logoWidth = getLogoWidth();
+          const logoHeight = getLogoHeight();
+
+          const logoX = getLogoXPosition(logoWidth);
+          const logoY = getLogoYPosition(logoHeight);
+
+          ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
+        };
+      }
+    }
+
+    // Function to draw text
+    function drawText() {
+      ctx.fillStyle = textColor;
+      ctx.font = `75px ${selectedFont}`; // custom font
+      ctx.textAlign = textXPos;
+  
+      let textPosition = [];
+      if (textXPos === 'center') {
+        textPosition[0] = canvas.width / 2;
+      } else if (textXPos === 'left') {
+        textPosition[0] = 20;
+      } else {
+        textPosition[0] = canvas.width - 20;
+      }
+  
+      if (textYPos === 'center') {
+        textPosition[1] = canvas.height / 2;
+      } else if (textYPos === 'top') {
+        textPosition[1] = 50;
+      } else {
+        textPosition[1] = canvas.height - 20;
+      }
+  
+      ctx.fillText(bannerText, textPosition[0], textPosition[1]);
+
+      // Draw the second banner text (professionText)
+      ctx.fillText(professionText, textPosition[0], textPosition[1] + 100); 
+    }
     
     // Draw text
-    ctx.fillStyle = textColor;
+    // ctx.fillStyle = textColor;
     // ctx.font = "50px 'Bree Serif'";
-    ctx.font = `75px ${selectedFont}`; //custom font
-    ctx.textAlign = textXPos;
+    // ctx.font = `75px ${selectedFont}`; //custom font
+    // ctx.textAlign = textXPos;
 
     let textPosition = [];
     if (textXPos === 'center') {
@@ -137,14 +206,40 @@ export default function Example() {
     };
 
     ctx.fillText(bannerText, textPosition[0], textPosition[1]);
-  }, [hexColor, bannerText, textXPos, textYPos, textColor, logo, logoSize, logoXPos, logoYPos, clickedButton, selectedFont]);
+   }, [hexColor, bannerText, textXPos, textYPos, textColor, logo, logoSize, logoXPos, logoYPos, backgroundImage, clickedButton, selectedFont, professionText]);
 
+  const handleRemoveBackground = () => {
+    setBackgroundImage(null);
+  };
+
+  const handleBackgroundImageChange = (e) => {
+    // setHexColor(null);
+    setBackgroundImage(e.target.files[0]);
+  };
+
+  const handleProfessionalTheme = () => {
+    // Update the state and perform any necessary logic for LinkedIn theme
+    setHexColor('#0A66C2');
+    setTextColor('#FFF');
+    setBannerText('LinkedIn Theme');
+    // Add any additional customization for LinkedIn theme
+  };
+
+  const handleTwitterTheme = () => {
+    // Update the state and perform any necessary logic for Twitter theme
+    setHexColor('#1DA1F2');
+    setTextColor('#FFF');
+    setBannerText('Twitter Theme');
+    // Add any additional customization for Twitter theme
+  };
+  
   const handleFontChange = (e) => {
     setSelectedFont(e.target.value);
   };  
 
   const handleHexColorChange = (color) => {
     if (color && color.hex) {
+      setBackgroundImage(null)
       setHexColor(color.hex);
     }
   };
@@ -486,6 +581,42 @@ export default function Example() {
                     />
                     <label htmlFor="textWhite" className="ml-2 block text-sm text-gray-900">White</label>
                   </div>
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="textRed"
+                      name="TextColor"
+                      value="#FF0000"
+                      checked={textColor === '#FF0000'}
+                      onChange={handleTextColorChange}
+                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                    />
+                    <label htmlFor="textRed" className="ml-2 block text-sm text-gray-900">Red</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="textGreen"
+                      name="TextColor"
+                      value="#00FF00"
+                      checked={textColor === '#00FF00'}
+                      onChange={handleTextColorChange}
+                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                    />
+                    <label htmlFor="textGreen" className="ml-2 block text-sm text-gray-900">Green</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="textBlue"
+                      name="TextColor"
+                      value="#0000FF"
+                      checked={textColor === '#0000FF'}
+                      onChange={handleTextColorChange}
+                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                    />
+                    <label htmlFor="textBlue" className="ml-2 block text-sm text-gray-900">Blue</label>
+                  </div>
                 </div>
               </fieldset>
               <fieldset className="flex-1 mt-4">
@@ -585,6 +716,46 @@ export default function Example() {
                 </option>
               ))}
             </select>
+            <label htmlFor="backgroundImage" className="mt-4 block text-sm font-medium text-gray-600">Background Image:</label>
+            <input
+              type="file"
+              id="backgroundImage"
+              name="backgroundImage"
+              accept="image/*"
+              onChange={handleBackgroundImageChange}
+              className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
+            />
+
+            {backgroundImage && (
+              <button
+                onClick={handleRemoveBackground}
+                className="mt-2 p-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring focus:border-red-300"
+              >
+                Remove Background
+              </button>
+            )}
+
+            <label htmlFor="theme" className="mt-4 block text-sm font-medium text-gray-600">Choose Theme:</label>
+            <div className="flex mt-2">
+              <button
+                onClick={handleProfessionalTheme}
+                className="mr-2 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+              >
+                Professional Theme
+              </button>
+              <button
+                onClick={handleTwitterTheme}
+                className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+              >
+                Personal Theme
+              </button>
+              <button
+                onClick={handleTwitterTheme}
+                className="ml-2 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+              >
+                Minimalist Theme
+              </button>
+            </div>
             <label htmlFor="logo" className="mt-4 block text-sm font-medium text-gray-600">Logo:</label>
             <input
               type="file"
