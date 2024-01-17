@@ -39,8 +39,8 @@ const Cobapage = () => {
   const [socialHandler, setSocialHandler] = useState('@youraccount');
 
   // State for Styling Text
-  const [selectedFont, setSelectedFont] = useState("");
-  const [fontSize, setFontSize] = useState("");
+  const [selectedFont, setSelectedFont] = useState("Arial");
+  const [fontSize, setFontSize] = useState("24px");
   const [fontColor, setFontColor] = useState("red");
 
   const handleSizeChange = (width, height) => {
@@ -282,7 +282,7 @@ const Cobapage = () => {
         {/* Static sidebar for desktop bg-red-100 change to bg-white */}
         <aside className="fixed bottom-0 left-0 right-0 top-96 overflow-y-auto bg-red-100 border-r border-gray-200 px-4 sm:left-20 sm:top-20 sm:w-96 sm:px-6 lg:px-8 xl:block">
           <form id="banner-data-form" className="mb-4">
-            <ColorPicker label="Background Colour (hex):" color={background} onChange={handleBackgroundChange} readOnly/> 
+            {/* <ColorPicker label="Background Colour (hex):" color={background} onChange={handleBackgroundChange} readOnly/>  */}
             <FileInput label={"Background Image:"} id={"background"} accept={"image/*"} onChange={handleBackgroundImageChange}/>
             {background && (
               <button
