@@ -65,3 +65,23 @@ function formChanged(){
 
 
 }
+
+
+<label htmlFor="image" className="mt-4 block text-sm font-medium text-gray-600">Photo Image:</label>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*"
+              onChange={handleImagePhotoChange}
+              className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
+            />
+
+            {image && (
+              <button
+                onClick={handleRemoveImagePhoto}
+                className="mt-2 p-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring focus:border-red-300"
+              >
+                Remove Photo
+              </button>
+            )}

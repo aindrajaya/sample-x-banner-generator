@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 const ProfessionalFields = ({ setNameText, setOccupationText }) => (
   <>
     <label htmlFor="name" className="mt-2 block text-sm font-medium text-gray-600">
@@ -23,5 +25,11 @@ const ProfessionalFields = ({ setNameText, setOccupationText }) => (
     />
   </>
 );
+
+
+ProfessionalFields.propTypes = {
+  setNameText: PropTypes.func.isRequired,
+  setOccupationText: PropTypes.func.isRequired,
+};
 
 export default ProfessionalFields

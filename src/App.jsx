@@ -1,12 +1,14 @@
 import React from 'react'
 import Generator from './GeneratorPage'
 import LinkedInBannerGenerator from './ProfessionalTheme'
+import Cobapage from './Cobapage'
 
 const App = () => {
   return (
     <div>
-      <Generator />
+      {/* <Generator /> */}
       {/* <LinkedInBannerGenerator /> */}
+      <Cobapage />
     </div>
   )
 }

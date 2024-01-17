@@ -10,6 +10,7 @@ import DesktopSidebar from './components/DesktopSidebar';
 import SearchForm from './components/SearchForm';
 import ProfileSection from './components/ProfileSection';
 import ProfessionalFields from './components/ProfessionalFields';
+import BannerForm from './components/BannerForm';
 
 const fontOptions = [
   { label: 'Bree Serif', value: "'Bree Serif', serif" },
@@ -56,7 +57,7 @@ export default function Generator() {
 
 
   useEffect(() => {
-    if (isMounted.current) {
+    if (true) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
   
@@ -372,41 +373,58 @@ export default function Generator() {
           </div>
 
           <main className="xl:pl-96">
-            
-              <div className="px-4 py-10 sm:px-6 lg:px-8 lg:py-6">
-                <canvas
-                  ref={canvasRef}
-                  id="banner"
-                  width={canvasWidth}
-                  height={canvasHeight}
-                  className="border border-gray-400 rounded mt-4 w-full"
-                ></canvas>
-                <div className="mt-4">
-                  <button
-                    onClick={() => handleSizeChange(1500, 500, 'Twitter')}
-                    className={`mr-2 p-2 ${clickedButton === 'Twitter' ? 'bg-green-300' : 'bg-blue-500'} text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300`}
-                  >
-                    Twitter Size
-                  </button>
-                  <button
-                    onClick={() => handleSizeChange(1584, 396, 'LinkedIn')}
-                    className={`p-2 ${clickedButton === 'LinkedIn' ? 'bg-green-300' : 'bg-blue-500'} text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-red-300`}
-                  >
-                    LinkedIn Size
-                  </button>
-                </div>
+            <div className="px-4 py-10 sm:px-6 lg:px-8 lg:py-6">
+              <canvas
+                ref={canvasRef}
+                id="banner"
+                width={canvasWidth}
+                height={canvasHeight}
+                className="border border-gray-400 rounded mt-4 w-full"
+              ></canvas>
+              <div className="mt-4">
                 <button
-                  onClick={handleDownloadImage}
-                  className="mt-4 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+                  onClick={() => handleSizeChange(1500, 500, 'Twitter')}
+                  className={`mr-2 p-2 ${clickedButton === 'Twitter' ? 'bg-green-300' : 'bg-blue-500'} text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300`}
                 >
-                  Download Image
+                  Twitter Size
+                </button>
+                <button
+                  onClick={() => handleSizeChange(1584, 396, 'LinkedIn')}
+                  className={`p-2 ${clickedButton === 'LinkedIn' ? 'bg-green-300' : 'bg-blue-500'} text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-red-300`}
+                >
+                  LinkedIn Size
                 </button>
               </div>
-            
+              <button
+                onClick={handleDownloadImage}
+                className="mt-4 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+              >
+                Download Image
+              </button>
+            </div>
           </main>
         </div>
 
         <aside className="fixed bottom-0 left-0 right-0 top-96 overflow-y-auto bg-white border-r border-gray-200 px-4 sm:left-20 sm:top-20 sm:w-96 sm:px-6 lg:px-8 xl:block">
+          {/* <BannerForm 
+            professionalButtonClicked={professionalButtonClicked}
+            setNameText={setNameText}
+            setOccupationText={setOccupationText}
+            selectedFont={selectedFont}
+            handleFontChange={handleFontChange}
+            handleBackgroundImageChange={handleBackgroundImageChange}
+            backgroundImage={backgroundImage}
+            handleRemoveBackground={handleRemoveBackground}
+            handleProfessionalTheme={handleProfessionalTheme}
+            handleTwitterTheme={handleTwitterTheme}
+            handleLogoChange={handleLogoChange}
+            logoSize={logoSize}
+            handleLogoSizeChange={handleLogoSizeChange}
+            logoXPos={logoXPos}
+            handleLogoXPosChange={handleLogoXPosChange}
+            logoYPos={logoYPos}
+            handleLogoYPosChange={handleLogoXPosChange}
+            /> */}
           <form id="banner-data-form" className="mb-4">
             <label htmlFor="hexColor" className="mb-4 block text-sm font-medium text-gray-600">
               Background Colour (hex):
@@ -427,7 +445,7 @@ export default function Generator() {
               className="mt-4 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 block w-full sm:text-sm"
               readOnly
             />
-            {professionalButtonClicked ? (
+            {true ? (
               <ProfessionalFields setNameText={setNameText} setOccupationText={setOccupationText} />
             ): (
               <Fragment>
